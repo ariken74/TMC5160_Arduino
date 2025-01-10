@@ -31,3 +31,4 @@
 .pio
 platformio.ini
 .vscode
+DS_Store
