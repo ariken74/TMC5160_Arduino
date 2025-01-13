@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-idf_component_register(SRCS "src/TMC5160.cpp" "src/TMC5160_SPI.cpp" 
+idf_component_register(SRCS "src/TMC5160.cpp" "src/TMC5160_SPI.cpp" "src/SPIDevice.cpp"
                        INCLUDE_DIRS "src"
                        REQUIRES arduino ArxTypeTraits)
 

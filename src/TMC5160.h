@@ -26,10 +26,11 @@ SOFTWARE.
 #ifndef TMC5160_H
 #define TMC5160_H
 
-#include <Arduino.h>
-#include <SPI.h>
+#include "SPIDevice.h"
+
 #include <TMC5160_registers.h>
 #define CHAINED_CHIPS 2
+
 class TMC5160
 {
 public:
@@ -234,9 +235,8 @@ class TMC5160_SPI : public TMC5160
 {
 public:
 	TMC5160_SPI(uint8_t chipSelectPin, // pin to use for the SPI bus SS line
-				uint32_t fclk = DEFAULT_F_CLK,
-				const SPISettings &spiSettings = SPISettings(4000000, MSBFIRST, SPI_MODE3), // spi bus settings to use (max SCK frequency of 4Mhz)
-				SPIClass &spi = SPI);														// spi class to use
+				SPIDevice spi,
+				uint32_t fclk = DEFAULT_F_CLK);														// spi class to use
 
 	uint32_t readRegister(uint8_t chip_id, uint8_t address); // addresses are from TMC5160.h
 	uint8_t writeRegister(uint8_t chip_id, uint8_t address, uint32_t data);
@@ -244,8 +244,7 @@ public:
 
 private:
 	uint8_t _CS;
-	SPISettings _spiSettings;
-	SPIClass *_spi;
+	SPIDevice _spi;
 
 	void _beginTransaction();
 	void _endTransaction();
