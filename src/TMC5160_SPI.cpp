@@ -168,6 +168,45 @@ uint8_t TMC5160_SPI::writeRegister(uint8_t chip_id, uint8_t address, uint32_t da
 	return status;
 }
 
+uint8_t TMC5160_SPI::writeRegisterFull(uint8_t address, uint32_t data1, uint32_t data2)
+{
+	uint8_t status = 0;
+	spi_transaction_t t;
+	memset(&t, 0, sizeof(t));
+	uint8_t *buffer = (uint8_t *)heap_caps_aligned_alloc(4, 5 * CHAINED_CHIPS, MALLOC_CAP_DMA);
+	// address register
+	_beginTransaction();
+	for (int i = CHAINED_CHIPS - 1; i >= 0; i--)
+	{
+		if (i == 0)
+		{
+			buffer[i * 5] = (address | WRITE_ACCESS);
+			
+			// send new register value
+			buffer[(i * 5) + 1] = ((data1 & 0xFF000000) >> 24);
+			buffer[(i * 5) + 2] = ((data1 & 0xFF0000) >> 16);
+			buffer[(i * 5) + 3] = ((data1 & 0xFF00) >> 8);
+			buffer[(i * 5) + 4] = (data1 & 0xFF);
+		}
+		if (i == 1)
+		{
+			buffer[i * 5] = (address | WRITE_ACCESS);
+			
+			// send new register value
+			buffer[(i * 5) + 1] = ((data2 & 0xFF000000) >> 24);
+			buffer[(i * 5) + 2] = ((data2 & 0xFF0000) >> 16);
+			buffer[(i * 5) + 3] = ((data2 & 0xFF00) >> 8);
+			buffer[(i * 5) + 4] = (data2 & 0xFF);
+		}
+	}
+	_spi.transfer(buffer, 5 * CHAINED_CHIPS);
+	printf("SPI STATUS 0: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(buffer[0]));
+	printf("SPI STATUS 1: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(buffer[5]));
+	_endTransaction();
+	heap_caps_aligned_free(buffer);
+	return status;
+}
+
 uint8_t TMC5160_SPI::readStatus(uint8_t chip_id)
 {
 	// read general config

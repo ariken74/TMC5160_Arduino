@@ -99,7 +99,7 @@ public:
 
 	virtual uint32_t readRegister(uint8_t chip_id, uint8_t address) = 0; // addresses are from TMC5160.h
 	virtual uint8_t writeRegister(uint8_t chip_id, uint8_t address, uint32_t data) = 0;
-
+	virtual uint8_t writeRegisterFull(uint8_t address, uint32_t data1, uint32_t data2) = 0;
 	/* Check if the last register read was successful. This should be checked whenever
 	 a register read is used to take a decision.
 	 Reasons for failure can be : data bus disconnected, transmission error (bad CRC), etc
@@ -122,7 +122,8 @@ public:
 	float getCurrentSpeed(uint8_t chip_id);			  // Return the current speed (steps / second)
 
 	void setCurrentPosition(uint8_t chip_id, float position, bool updateEncoderPos = false);					// Set the current internal position (steps) and optionally update the encoder counter as well to keep them in sync.
-	void setTargetPosition(uint8_t chip_id, float position);													// Set the target position /!\ Set all other motion profile parameters before
+	void setTargetPosition(uint8_t chip_id, float position);
+	void setTargetPositionXY(float positionX, float positionY);													// Set the target position /!\ Set all other motion profile parameters before
 	void setMaxSpeed(uint8_t chip_id, float speed);																// Set the max speed VMAX (steps/second)
 	void setRampSpeeds(uint8_t chip_id, float startSpeed, float stopSpeed, float transitionSpeed);				// Set the ramp start speed VSTART, ramp stop speed VSTOP, acceleration transition speed V1 (steps / second). /!\ Set VSTOP >= VSTART, VSTOP >= 0.1
 	void setAcceleration(uint8_t chip_id, float maxAccel);														// Set the ramp acceleration / deceleration (steps / second^2)
@@ -240,6 +241,7 @@ public:
 
 	uint32_t readRegister(uint8_t chip_id, uint8_t address); // addresses are from TMC5160.h
 	uint8_t writeRegister(uint8_t chip_id, uint8_t address, uint32_t data);
+	uint8_t writeRegisterFull(uint8_t address, uint32_t data1, uint32_t data2);
 	uint8_t readStatus(uint8_t chip_id);
 
 private:

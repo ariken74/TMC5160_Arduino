@@ -213,6 +213,11 @@ void TMC5160::setTargetPosition(uint8_t chip_id, float position)
 	writeRegister(chip_id, TMC5160_Reg::XTARGET, (int32_t)(position * (float)_uStepCount));
 }
 
+void TMC5160::setTargetPositionXY(float positionX, float positionY)
+{
+	writeRegisterFull(TMC5160_Reg::XTARGET, (int32_t)(positionX * (float)_uStepCount), (int32_t)(positionY * (float)_uStepCount));
+}
+
 void TMC5160::setMaxSpeed(uint8_t chip_id, float speed)
 {
 	writeRegister(chip_id, TMC5160_Reg::VMAX, min((int32_t)0x7FFFFF, speedFromHz(fabs(speed)))); // VMAX : 23 bits
